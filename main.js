@@ -30,7 +30,7 @@ class Main {
 
         this.initRouter();
 
-        app.listen(3000, () => {
+        app.listen(3000, '0.0.0.0', () => {
             console.log('Concept Podo api launched');
         });
     }
@@ -44,6 +44,12 @@ class Main {
             this.render('podo', 'generateSuggest', req, res);
         });
 
+        /*
+        POST /api/v1/entry
+         */
+        app.post(CONF.APIURL+'entry', (req, res) => {
+            this.render('podo', 'createEntry', req, res);
+        });
     }
 
     /**

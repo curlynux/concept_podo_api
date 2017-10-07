@@ -44,6 +44,7 @@ class Mongo {
     {
         return new Promise((res, rej) => {
             this.dbConnection.collection(collection).insertOne(document, (err, result) => {
+                this.close();
                 if (err) {
                     rej(new Error(JSON.stringify(err)));
                 }
@@ -100,6 +101,18 @@ class Mongo {
     {
         return new Promise((res, rej) => {
             this.dbConnection.collection(collection).findOne(document, (err, result) => {
+                if (err) {
+                    rej(new Error(JSON.stringify(err)));
+                }
+                res(result);
+            });
+        });
+    }
+
+    aggregate (document, collection)
+    {
+        return new Promise((res, rej) => {
+            this.dbConnection.collection(collection).aggregate(document, (err, result) => {
                 if (err) {
                     rej(new Error(JSON.stringify(err)));
                 }

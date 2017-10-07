@@ -1,7 +1,7 @@
 
 const CONF = {
     APIURL : "/api/v1/",
-    mongoConnection : "mongodb://localhost:27017/lump",
+    mongoConnection : "mongodb://localhost:27017/conceptPodo",
     mongoTestCollection : "test",
     logFile : "/var/log/prod.log"
 };
