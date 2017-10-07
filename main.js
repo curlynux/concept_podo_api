@@ -1,10 +1,10 @@
 
-global.ROOT             = __dirname;
-const express           = require('express');
-const app               = express();
-const CONF              = require('./config/conf');
-const {checkoutFactory} = require('./src/ConceptPodoComponent/ControllerFactory');
-const bodyParser        = require('body-parser');
+global.ROOT               = __dirname;
+const express             = require('express');
+const app                 = express();
+const CONF                = require('./config/conf');
+const {controllerFactory} = require('./src/ConceptPodoComponent/ControllerFactory');
+const bodyParser          = require('body-parser');
 
 /**
  * Main class
@@ -68,7 +68,7 @@ class Main {
      */
     async render (c, m, req, res)
     {
-        const result = await checkoutFactory.init(c, m, req);
+        const result = await controllerFactory.init(c, m, req);
         res.status(result.statusCode);
         res.send(result);
     }

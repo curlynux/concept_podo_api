@@ -1,7 +1,12 @@
 
 const {podoController}  = require(ROOT+'/src/ConceptPodoComponent/Controller/PodoController');
 
-class CheckoutFactory {
+/**
+ * class ControllerFactory
+ *
+ * @Author Thomas Dupont dupont.thomas70@gmail.com
+ */
+class ControllerFactory {
 
     constructor ()
     {
@@ -16,4 +21,4 @@ class CheckoutFactory {
     }
 }
 
-module.exports.checkoutFactory = new CheckoutFactory();
+module.exports.controllerFactory = new ControllerFactory();
