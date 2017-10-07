@@ -4,7 +4,13 @@ const {suggestManager}  = require(ROOT+"/src/ConceptPodoComponent/Model/SuggestM
 const {tokenManager}    = require(ROOT+"/src/ConceptPodoComponent/Model/TokenManager");
 const {Mongo}           = require(ROOT+"/src/ConceptPodoComponent/Service/Mongo");
 const {log}             = require(ROOT+"/src/ConceptPodoComponent/Service/LogService");
+const {cacheService}    = require(ROOT+"/src/ConceptPodoComponent/Service/CacheService");
 
+/**
+ * class PodoController
+ *
+ * @Author Thomas Dupont dupont.thomas70@gmail.com
+ */
 class PodoController
 {
     /**
@@ -88,16 +94,53 @@ class PodoController
     /**
      * Return suggestion of mold
      *
-     * @route("v1/suggest/:ref")
+     * {
+           "ref" : "ref",
+           "search" : {
+                "shoeLong": {
+                    "value" : 93,
+                    "pond" : 2
+                },
+                "shoeWidth": {
+                    "value" : 186,
+                    "pond" : 2
+                },
+                "flankLineTurn": {
+                    "value" : 55,
+                    "pond" : 1
+                },
+                "kickTurn": {
+                    "value" : 6,
+                    "pond" : 1
+                },
+                "entry": {
+                    "value" : 95,
+                    "pond" : 1
+                },
+                "height_10": {
+                    "value" : 22,
+                    "pond" : 1
+                },
+                "Cambrure": {
+                    "value" : 179,
+                    "pond" : 1
+                },
+                "heelWidth": {
+                    "value" : 186,
+                    "pond" : 1
+                }
+            }
+        }
+     *
+     * @route("v1/suggest")
      *
      * @param req
      * @returns {Promise}
      */
     async generateSuggestAction(req)
     {
-        const ref  = req.query.ref;
-        let result;
-        let response;
+        const ref  = req.query.ref || req.body.ref,
+            search = req.query.search || req.body.search;
 
         try {
             await Mongo.connect()
@@ -109,7 +152,57 @@ class PodoController
             };
         }
 
-        return await suggestManager.generateSuggestion(100);
+        return await suggestManager.generateSuggestion(search);
+    }
+
+    /**
+     * Get a single modl information. The response is cached for 10 hours
+     *
+     * @route("v1/file/:filename")
+     *
+     * @param req
+     * @returns {Promise.<*>}
+     */
+    async getMoldAction(req)
+    {
+        const file = req.params.filename;
+        let result, response;
+
+        if (cacheService.has(file)) {
+            return cacheService.get(file);
+        }
+
+        try {
+            await Mongo.connect()
+        } catch (e) {
+            log.simpleLog('Mongo error '+e);
+            return {
+                statusCode: 500,
+                result: "error_database"
+            };
+        }
+
+        try {
+            result = await Mongo.findOne({filename : file} , CONF.mongoTestCollection);
+        } catch (e) {
+            log.simpleLog('Mongo error '+e);
+            return {
+                statusCode: 500,
+                result: "error_database"
+            };
+        }
+
+        response = result ?  {
+            statusCode : 200,
+            result : result
+        } : {
+            statusCode : 404,
+            result : "not_found"
+        };
+
+        cacheService.set(file, response, 3600 * 10);
+
+        return response;
     }
 }
 

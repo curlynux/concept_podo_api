@@ -2,26 +2,22 @@
 const CONF           = require(ROOT+"/config/conf");
 const {log}          = require(ROOT+"/src/ConceptPodoComponent/Service/LogService");
 const {Mongo}        = require(ROOT+"/src/ConceptPodoComponent/Service/Mongo");
-const {cacheService} = require(ROOT+"/src/ConceptPodoComponent/Service/CacheService");
 
 /**
- * Email Manager
+ * Suggest Manager
  *
  * @author Thomas Dupont
  */
 class SuggestManager {
 
-    constructor()
-    {
-        this.email      = false;
-        this.error      = "";
-        this.statusCode = 200;
-    }
-
+    /**
+     *
+     * @param search
+     * @returns {Promise.<*>}
+     */
     async generateSuggestion(search)
     {
         let result;
-
         try {
             await Mongo.connect();
         } catch (e) {
@@ -33,88 +29,30 @@ class SuggestManager {
         }
 
         try {
+            let sum = [], el;
+            for(el in search) {
+                sum.push(
+                    {
+                        $abs: {
+                            $multiply : [
+                                {
+                                    $subtract: [
+                                        parseInt(search[el].value * 10),
+                                        '$' + el
+                                    ]
+                                },
+                                search[el].pond
+                            ]
+                        }
+                    }
+                );
+            }
             result = await Mongo.aggregate(
                 [
                     {
                         $project: {
                             diff: {
-                                $sum : [
-                                    {
-                                        $abs: {
-                                            $multiply : [
-                                                {
-                                                    $subtract: [
-                                                        search,
-                                                        '$shoeLong'
-                                                    ]
-                                                },
-                                                2
-                                            ]
-                                        }
-                                    },
-                                    {
-                                        $abs: {
-                                            $multiply : [
-                                                {
-                                                    $subtract: [
-                                                        search,
-                                                        '$shoeWidth'
-                                                    ]
-                                                },
-                                                2
-                                            ]
-                                        }
-                                    },
-                                    {
-                                        $abs: {
-                                            $subtract: [
-                                                search,
-                                                '$flankLineTurn'
-                                            ]
-                                        }
-                                    },
-                                    {
-                                        $abs: {
-                                            $subtract: [
-                                                search,
-                                                '$kickTurn'
-                                            ]
-                                        }
-                                    },
-                                    {
-                                        $abs: {
-                                            $subtract: [
-                                                search,
-                                                '$entry'
-                                            ]
-                                        }
-                                    },
-                                    {
-                                        $abs: {
-                                            $subtract: [
-                                                search,
-                                                '$height_10'
-                                            ]
-                                        }
-                                    },
-                                    {
-                                        $abs: {
-                                            $subtract: [
-                                                search,
-                                                '$Cambrure'
-                                            ]
-                                        }
-                                    },
-                                    {
-                                        $abs: {
-                                            $subtract: [
-                                                search,
-                                                '$heelWidth'
-                                            ]
-                                        }
-                                    }
-                                ]
-
+                                $sum : sum
                             },
                             doc: '$$ROOT'
                         }
@@ -127,7 +65,7 @@ class SuggestManager {
                 CONF.mongoTestCollection
             );
         } catch (e) {
-            log.simpleLog('Mongo error '+e);
+            log.simpleLog('Mongo error ' + e);
             return {
                 statusCode: 500,
                 result: "error_database"
@@ -141,7 +79,7 @@ class SuggestManager {
             result : result
         } : {
             statusCode : 404,
-            result : "not_reconize"
+            result : false
         };
     }
 

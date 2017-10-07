@@ -9,7 +9,7 @@ const bodyParser        = require('body-parser');
 /**
  * Main class
  *
- * @author Thomas Dupont
+ * @Author Thomas Dupont dupont.thomas70@gmail.com
  */
 class Main {
     constructor ()
@@ -45,6 +45,13 @@ class Main {
         });
 
         /*
+         GET /api/v1/file/:filename
+         */
+        app.get(CONF.APIURL+'file/:filename', (req, res) => {
+            this.render('podo', 'getMold', req, res);
+        });
+
+        /*
         POST /api/v1/entry
          */
         app.post(CONF.APIURL+'entry', (req, res) => {
@@ -57,7 +64,7 @@ class Main {
      * @param c Controller
      * @param m Method
      * @param req The request
-     * @param res The reponse event
+     * @param res The response event
      */
     async render (c, m, req, res)
     {
