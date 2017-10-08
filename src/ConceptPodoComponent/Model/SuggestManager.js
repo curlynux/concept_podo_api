@@ -37,11 +37,11 @@ class SuggestManager {
                             $multiply : [
                                 {
                                     $subtract: [
-                                        parseInt(search[el].value * 10),
+                                        parseInt((search[el].value || 0) * 10),
                                         '$' + el
                                     ]
                                 },
-                                search[el].pond
+                                parseInt(search[el].pond || 1)
                             ]
                         }
                     }
@@ -79,7 +79,7 @@ class SuggestManager {
             result : result
         } : {
             statusCode : 404,
-            result : false
+            result : "bad_request"
         };
     }
 

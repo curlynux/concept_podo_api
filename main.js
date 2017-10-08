@@ -53,9 +53,25 @@ class Main {
 
         /*
         POST /api/v1/entry
+
+        Only for test
          */
         app.post(CONF.APIURL+'entry', (req, res) => {
             this.render('podo', 'createEntry', req, res);
+        });
+
+        /*
+         POST /api/v1/upsert
+         */
+        app.post(CONF.APIURL+'upsert', (req, res) => {
+            this.render('podo', 'upsertMold', req, res);
+        });
+
+        /*
+         DELETE /api/v1/mold
+         */
+        app.delete(CONF.APIURL+'mold', (req, res) => {
+            this.render('podo', 'deleteMold', req, res);
         });
     }
 
