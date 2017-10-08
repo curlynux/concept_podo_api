@@ -139,7 +139,7 @@ Return error (example):
 ```
 
 _Query Parameters_
-``
+
 ```json
 {
    "ref" : "ref",
@@ -243,7 +243,7 @@ Return error (example):
 }
 ```
 
-_URL Parameters_
+_Query Parameters_
 
 ```json
 {
