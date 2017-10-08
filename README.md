@@ -16,6 +16,12 @@ npm install
 
 configure the application with the config/conf.js
 
+### Launch app
+
+```bash
+npm start
+```
+
 ## Routes
 
 ### GET /api/v1/suggests
