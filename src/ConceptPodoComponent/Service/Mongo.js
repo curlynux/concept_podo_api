@@ -21,11 +21,11 @@ class Mongo {
         return new Promise((res, rej) => {
             if(this.dbConnection) {
                 //If the connection still exist, return the instance
-                res(this);
+                return res(this);
             }
             MongoClient.connect(CONF.mongoConnection, (err, db) => {
                 if (err) {
-                    rej(new Error(JSON.stringify(err)));
+                    return rej(new Error(JSON.stringify(err)));
                 }
                 this.dbConnection = db;
                 //promise the instance of the prototype
@@ -44,9 +44,8 @@ class Mongo {
     {
         return new Promise((res, rej) => {
             this.dbConnection.collection(collection).insertOne(document, (err, result) => {
-                this.close();
                 if (err) {
-                    rej(new Error(JSON.stringify(err)));
+                    return rej(new Error(JSON.stringify(err)));
                 }
                 res(result);
             });
@@ -64,7 +63,7 @@ class Mongo {
         return new Promise((res, rej) => {
             this.dbConnection.collection(collection).deleteOne(document, (err, result) => {
                 if (err) {
-                    rej(new Error(JSON.stringify(err)));
+                    return rej(new Error(JSON.stringify(err)));
                 }
                 res(result);
             });
@@ -83,7 +82,7 @@ class Mongo {
         return new Promise((res, rej) => {
             this.dbConnection.collection(collection).find(document).toArray((err, result) => {
                 if (err) {
-                    rej(new Error(JSON.stringify(err)));
+                    return rej(new Error(JSON.stringify(err)));
                 }
                 res(result);
             });
@@ -102,7 +101,7 @@ class Mongo {
         return new Promise((res, rej) => {
             this.dbConnection.collection(collection).findOne(document, (err, result) => {
                 if (err) {
-                    rej(new Error(JSON.stringify(err)));
+                    return rej(new Error(JSON.stringify(err)));
                 }
                 res(result);
             });
@@ -114,7 +113,7 @@ class Mongo {
         return new Promise((res, rej) => {
             this.dbConnection.collection(collection).aggregate(document, (err, result) => {
                 if (err) {
-                    rej(new Error(JSON.stringify(err)));
+                    return rej(new Error(JSON.stringify(err)));
                 }
                 res(result);
             });
